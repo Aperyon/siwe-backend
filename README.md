@@ -11,6 +11,7 @@ PORT=3000
 SIWE_DOMAIN=localhost
 SIWE_ORIGIN=https://localhost/login
 SESSION_SECRET=example-secret
+CORS_ORIGIN=http://localhost:5173
 
 
 # This was inserted by `prisma init`:
