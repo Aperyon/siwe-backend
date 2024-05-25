@@ -91,7 +91,6 @@ app.post("/verify", async (req, res) => {
 });
 
 app.get("/current-user", async (req, res) => {
-  console.log(req.session.siwe);
   if (!req.session.siwe) {
     res.status(401).json({ message: "You have to first sign_in" });
     return;
@@ -129,10 +128,3 @@ app.post("/logout", (req, res) => {
 app.listen(port, () => {
   console.log("Server is running!");
 });
-
-console.log(
-  createSiweMessage(
-    "0x6Ee9894c677EFa1c56392e5E7533DE76004C8D94",
-    "This is a test statement.",
-  ),
-);
