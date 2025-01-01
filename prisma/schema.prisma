@@ -15,4 +15,12 @@ model User {
   username String @unique
   bio String?
   eth String @unique
+  posts Post[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  text String
 }

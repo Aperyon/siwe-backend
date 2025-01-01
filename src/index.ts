@@ -4,9 +4,9 @@ import cors from "cors";
 import { generateNonce, SiweMessage, SiweErrorType } from "siwe";
 import Session from "express-session";
 dotenv.config();
-import { createSiweMessage } from "./siwe";
 import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
+import session from "express-session";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -123,6 +123,41 @@ app.post("/logout", (req, res) => {
 
   res.setHeader("Content-Type", "application/json");
   res.send(true);
+});
+
+app.get("/posts", async (req, res) => {
+  const user = await prisma.user.findFirst({
+    where: { eth: req.session.siwe.address },
+  });
+  if (!user) {
+    res.status(403).send("Authentication is required");
+    return;
+  }
+
+  const posts = await prisma.post.findMany();
+
+  res.setHeader("Content-Type", "application/json").send(posts);
+});
+
+app.post("/posts", async (req, res) => {
+  const user = await prisma.user.findFirst({
+    where: { eth: req.session.siwe.address },
+  });
+  if (!user) {
+    res.status(403).send("Authentication is required");
+    return;
+  }
+  const { text } = req.body;
+
+  const post = await prisma.post.create({
+    data: {
+      userId: user.id,
+      text,
+    },
+  });
+
+  res.setHeader("Content-Type", "application/json").status(201);
+  res.send(post);
 });
 
 app.listen(port, () => {
